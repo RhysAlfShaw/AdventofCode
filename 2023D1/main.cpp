@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 
 
@@ -21,6 +22,7 @@ std::vector<std::string> readLines(std::string path){
 }
 
 
+
 int main(int argc, char const *argv[]){
     
     
@@ -32,23 +34,51 @@ int main(int argc, char const *argv[]){
     }
 
 
-    // go though each line and look for the first and last number sting 
+    // correct for speltout words.
+
+    std::vector<std::string> numberStringss = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+    
+
+    //loop through each line and add the digit to the location of the numberString in the line + 1.
+
+    for (std::string& line : lines) {
+        // Convert any numberStrings to digits and do the change after the loop.
+        for (const std::string& numberString : numberStringss) {
+            // while loop to replace all instances of the numberString in the line.
+            while (line.find(numberString) != std::string::npos) {
+                // Find the position of the numberString in the line.
+                int position = line.find(numberString);
+                // add the digit to the location of the numberString in the line + 1.
+                line.insert(position+1, std::to_string(std::distance(numberStringss.begin(), std::find(numberStringss.begin(), numberStringss.end(), numberString)) + 1));
+                // remove the numberString from the line.
+                //line.erase(position, numberString.length());
+            }
+
+        }   
+        
+    }
+
+    // go though each line and look for the first and last number string 
 
     std::vector<std::string> firstNumberStringvector;
     std::vector<std::string> lastNumberStringvector;
 
+
     // loop through each line
     for (std::string line : lines){
-        // loop through each character in the line
+        // loop through each character in the line  
+        
         for (char character : line){
             // if the character is a number
             if (isdigit(character)){
                 // save the character as a string and push it into the first number string vector
                 std::string numberString(1, character);
                 firstNumberStringvector.push_back(numberString);
+                int position = line.find(numberString);
                 break; // break out of the loop since we want the first number
             }
         }
+
         //loop though each character in the line backwards
         for (int i = line.length() - 1; i >= 0; i--){
             // if the character is a number
@@ -61,6 +91,8 @@ int main(int argc, char const *argv[]){
 
         }
     }
+
+
 
     
     std::cout << "First Number String: ";
@@ -79,6 +111,8 @@ int main(int argc, char const *argv[]){
     for (int i = 0; i < firstNumberStringvector.size(); i++){
         numberStrings.push_back(firstNumberStringvector[i] + lastNumberStringvector[i]);
     }
+
+
 
     // print the number strings
     std::cout << std::endl;
