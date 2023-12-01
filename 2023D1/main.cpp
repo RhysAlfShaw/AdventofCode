@@ -1,4 +1,4 @@
-#include <fstream> // Include the necessary header file
+#include <fstream>   // Include the necessary header file
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,6 +8,8 @@
 // function to read the lines from a file and return them as a vector of strings
 
 std::vector<std::string> readLines(std::string path){
+    
+    // Create a vector of strings to store the lines from the file.
 
     std::vector<std::string> lines;         // Vector to store the lines from the file.
     std::ifstream inputFile(path);          // Create an input file stream object
@@ -65,10 +67,17 @@ int main(int argc, char const *argv[]){
                 line.insert(position+1, std::to_string(std::distance(numberStringss.begin(), std::find(numberStringss.begin(), numberStringss.end(), numberString)) + 1));
     
             }
-
         }   
         
     }
+
+    // print the lines
+    std::cout << std::endl;
+    std::cout << "Lines: " << std::endl;
+    for (std::string line : lines){
+        std::cout << line << std::endl;
+    }
+    std::cout << std::endl;
 
     // go though each line and look for the first and last number string 
 
@@ -100,6 +109,7 @@ int main(int argc, char const *argv[]){
             }
         }
 
+
         //loop though each character in the line backwards
         for (int i = line.length() - 1; i >= 0; i--){
         
@@ -129,7 +139,9 @@ int main(int argc, char const *argv[]){
 
 
     // print the number strings
+    
     std::cout << std::endl;
+    
     std::cout << "Number Strings: ";
     
     for (std::string numberString : numberStrings){
@@ -138,8 +150,10 @@ int main(int argc, char const *argv[]){
     
     std::cout << std::endl;
 
+
     // print the sum of the numbers in the vector
     int sum = 0;
+    
     for (std::string numberString : numberStrings){
         sum += std::stoi(numberString);             // convert the string to an int and add it to the sum
     }
@@ -148,4 +162,5 @@ int main(int argc, char const *argv[]){
     
 
     return 0;
+
 }
