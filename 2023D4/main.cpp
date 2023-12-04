@@ -25,9 +25,25 @@ std::vector<std::string> readLines(std::string path){
 
 // task:
 // Need to find how many matches per row there are the winning numbers ( the ones that are before the | with those after).
-// caluclate the score of that line by doubleing for each match so it should be 1X2X2X2 1*2^{nwins-1}
+// calculate the score of that line by doubleing for each match so it should be 1X2X2X2 1*2^{nwins-1}
 
 
+std::vector<int> splitIntoNumbers(const std::string& str) {
+    std::istringstream iss(str);
+    std::vector<int> numbers;
+    int number;
+    while (iss >> number) {
+        numbers.push_back(number);
+    }
+    return numbers;
+}
+
+int countMatches(const std::vector<int>& vec1, const std::vector<int>& vec2) {
+    int matches = std::count_if(vec1.begin(), vec1.end(), [&](int i) {
+        return std::find(vec2.begin(), vec2.end(), i) != vec2.end();
+    });
+    return matches;
+}
 
 int main(int argc, char const *argv[]){
     if(argc < 2) {
@@ -37,14 +53,66 @@ int main(int argc, char const *argv[]){
     }
     
     std::string file_path = argv[1];
+    
     // print the file path
+
     std::cout << "File Path: " << file_path << std::endl;
+
     std::vector<std::string> lines = readLines(file_path);
     
+    int score_total = 0;
+    
     // print the lines in the file
+    
     for (std::string line : lines) {
         std::cout << "Line: " << line << std::endl;
     }
+
+    int index = 0;
+
+    for (std::string line : lines) {
+        index++;
+        // seperate the line at the '|'
+        std::cout <<"Index :"<< index;
+        char delimiter = '|';
+
+        size_t pos = line.find(delimiter);
+        std::string winning_numbers = line.substr(0, pos);
+        std::string my_numbers = line.substr(pos + 1);
+        size_t colonPos = winning_numbers.find(':');
+        winning_numbers = winning_numbers.substr(colonPos + 1);
+
+        //std::cout << "First half: " << winning_numbers << '\n';
+        //std::cout << "Second half: " << my_numbers << '\n';
+        
+        // put them into a vector
+
+        std::vector<int> winning_numbers_vector = splitIntoNumbers(winning_numbers);
+        std::vector<int> my_numbers_vector = splitIntoNumbers(my_numbers);
+        
+        //for (int number : winning_numbers_vector) {
+        //std::cout << number << ' ';
+       //}
+        // std::cout << '\n';
+
+        // std::cout << "My numbers: ";
+        // for (int number : my_numbers_vector) {
+        //     std::cout << number << ' ';
+        // }
+
+        int matches = countMatches(winning_numbers_vector,my_numbers_vector);
+        std::cout << " \n Number of matches: " << matches <<'\n';
+        
+        // calculate the score.
+
+        int score = 1*pow(2,matches-1);
+        std::cout<<"Score :" << score <<"\n"<<std::endl;
+        score_total = score_total + score;
+    }
+
+    // combined score
+
+    std::cout << "Combined Score :"<<score_total<<std::endl;
 
     // function that will interate though each line and caluclate the number of matches
     // take a line and create two vectors, one of winning and one of not winning. 
