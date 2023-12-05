@@ -60,7 +60,7 @@ int main(int argc, char const *argv[]){
 
     std::vector<std::string> lines = readLines(file_path);
     
-    int score_total = 0;
+    std::vector<int> scores(lines.size(), 0);
     
     // print the lines in the file
     
@@ -69,6 +69,11 @@ int main(int argc, char const *argv[]){
     }
 
     int index = 0;
+
+    // create a array of length number og lines
+
+    std::vector<int> scores_total(lines.size(), 1);
+
 
     for (std::string line : lines) {
         index++;
@@ -100,20 +105,57 @@ int main(int argc, char const *argv[]){
         //     std::cout << number << ' ';
         // }
 
+
         int matches = countMatches(winning_numbers_vector,my_numbers_vector);
         std::cout << " \n Number of matches: " << matches <<'\n';
         
-        // calculate the score.
+
+        // calculate the part 1 score.
 
         int score = 1*pow(2,matches-1);
-        std::cout<<"Score :" << score <<"\n"<<std::endl;
-        score_total = score_total + score;
+        std::cout<< "Part 1 Score :" << score <<"\n"<<std::endl;
+        scores_total[index-1] = score;
+
+        //part 2 scores
+
+        // if we have matches we want to add a one to the index of the next line up to the number of matches
+        
+        if (matches > 0){
+            for (int i = 0; i < matches; i++){
+                scores[index+i] = scores[index+i] + 1;
+            }
+        }
+        
     }
 
     // combined score
 
-    std::cout << "Combined Score :"<<score_total<<std::endl;
+    //std::cout << "Combined Score :"<<score_total<<std::endl;
 
+    std::cout << "Part 2 Scores :"<<std::endl;
+
+    // multiply scores_total by scores
+
+    // sum the scores_total
+
+    int sum_of_scores = 0;
+
+    for (int i = 0; i < scores.size(); i++){
+        scores[i] = scores[i]*scores_total[i];
+        sum_of_scores = sum_of_scores + scores[i];
+    }
+
+    std::cout << "Sum of scores : " << sum_of_scores  << std::endl;
+
+
+    
+    // loop though the vector
+    for (int i = 0; i < scores.size(); i++){
+        //scores[i] = pow(2,scores[i]-1);
+        std::cout << "Line " << i+1 << " : " << scores[i] << std::endl;
+    }
+
+    //std::cout << "Sum of scores : " << sum_of_scores  << std::endl;
     // function that will interate though each line and caluclate the number of matches
     // take a line and create two vectors, one of winning and one of not winning. 
     // these can be seperated at the | and go left untill : or right too the end of the line.
