@@ -25,7 +25,5 @@ program: main.c
 clean:
 	rm -f program
 
-# Run the program
-run: program
-	$(CC) $(CFLAGS) main.c -o program
+run : program
 	./program

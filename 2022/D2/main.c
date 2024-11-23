@@ -6,7 +6,7 @@
 
 void AdventCode2024()
 {
-    printf("Advent Code 2022 Challenge 1 Calorie Counting! \n");
+    printf("Advent Code 2024 Test! \n");
 }
 
 void StartTimer(struct timespec *start)
@@ -23,65 +23,77 @@ void EndTimer(struct timespec *start, struct timespec *end)
     printf("Time for execution: %f seconds\n", seconds);
 }
 
-// structure to hold our dynamic array of integers
 typedef struct
 {
-    int *numbers;
-    size_t size;
+    int *opponent; // should be numbers 1 rock, 2 paper, 3 scissors
+    int *player;   // should be numbers 1 rock, 2 paper, 3 scissors
+    int *score;
     size_t capacity;
-} NumberArray;
+} StrategyArray;
 
-// Initialize the array structure
-void initNumberArray(NumberArray *arr)
+void initStrategyArray(StrategyArray *arr, int capacity)
 {
-    arr->capacity = 10; // Initial capacity
-    arr->size = 0;
-    arr->numbers = malloc(arr->capacity * sizeof(int));
-    if (arr->numbers == NULL)
+    arr->capacity = capacity; // Initial capacity based on length of the input
+    arr->opponent = malloc(arr->capacity * sizeof(int));
+    arr->player = malloc(arr->capacity * sizeof(int));
+    arr->score = malloc(arr->capacity * sizeof(int));
+    if (arr->opponent == NULL || arr->player == NULL || arr->score == NULL)
     {
         fprintf(stderr, "Failed to allocate memory\n");
         exit(1);
     }
 }
 
-// Resize array if needed
-void ensureCapacity(NumberArray *arr)
+int GetPlayerMove(char player, int opponent)
 {
-    if (arr->size >= arr->capacity)
+    // if player is X, then we need to lose
+
+    if (player == 'X') // lose the game
     {
-        arr->capacity *= 2;
-        int *temp = realloc(arr->numbers, arr->capacity * sizeof(int));
-        if (temp == NULL)
+        if (opponent == 1) // oppenent is rock
         {
-            fprintf(stderr, "Failed to reallocate memory\n");
-            free(arr->numbers);
-            exit(1);
+            return 3; // scissors
         }
-        arr->numbers = temp;
+        else if (opponent == 2) // opponent is paper
+        {
+            return 1; // rock
+        }
+        else if (opponent == 3) // opponent is scissors
+        {
+            return 2; // paper
+        }
     }
-}
-
-// Function to free the dynamically allocated memory
-void freeNumberArray(NumberArray *arr)
-{
-    free(arr->numbers);
-}
-
-// Helper function to check if a line is empty or contains only spaces
-int isEmptyOrWhitespace(const char *line)
-{
-    while (*line)
+    else if (player == 'Y') // draw the game
     {
-        if (!isspace((unsigned char)*line))
-            return 0; // Line has something other than whitespace
-        line++;
+        return opponent;
     }
-    return 1; // Line is empty or only whitespace
+    else if (player == 'Z') // win the game
+    {
+        if (opponent == 1) // oppenent is rock
+        {
+            return 2; // paper
+        }
+        else if (opponent == 2) // opponent is paper
+        {
+            return 3; // scissors
+        }
+        else if (opponent == 3) // opponent is scissors
+        {
+            return 1; // rock
+        }
+    }
+    else
+    {
+        fprintf(stderr, "Invalid player move\n");
+        exit(1);
+    }
+   
 }
 
-// Read integers from file
-NumberArray readNumbersFromFile(const char *filename)
+StrategyArray readDataToStrategyArray(const char *filename)
 {
+    // open the file
+
     FILE *file = fopen(filename, "r");
     if (file == NULL)
     {
@@ -89,111 +101,107 @@ NumberArray readNumbersFromFile(const char *filename)
         exit(1);
     }
 
-    NumberArray arr;
-    initNumberArray(&arr);
-
+    int lenght_of_file = 0;
     char line[1024];
     while (fgets(line, sizeof(line), file))
     {
-        if (isEmptyOrWhitespace(line))
-        {
-            ensureCapacity(&arr);
-            arr.numbers[arr.size++] = 0;
-        }
-        else
-        {
-            int number;
-            if (sscanf(line, "%d", &number) == 1)
-            {
-                ensureCapacity(&arr);
-                arr.numbers[arr.size++] = number;
-            }
-            else
-            {
-                ensureCapacity(&arr);
-                arr.numbers[arr.size++] = 0;
-            }
-        }
+        lenght_of_file++;
     }
+    printf("Lenght of file: %d\n", lenght_of_file);
+
+    StrategyArray arr;
+    initStrategyArray(&arr, lenght_of_file);
+
+    rewind(file); // go back to the beginning of the file
+    int i = 0;
+    while (fgets(line, sizeof(line), file))
+    {
+        // Remove newline character from the line
+        line[strcspn(line, "\n")] = '\0';
+        char *opponent, *player;
+        // for each line in the file
+        opponent = strtok(line, " "); // get the first token
+        player = strtok(NULL, " ");   // get the second token
+
+        if (strcmp(opponent, "A") == 0)
+        {
+            arr.opponent[i] = 1; // rock
+        }
+        else if (strcmp(opponent, "B") == 0)
+        {
+            arr.opponent[i] = 2; // paper
+        }
+        else if (strcmp(opponent, "C") == 0)
+        {
+            arr.opponent[i] = 3; // scissors
+        }
+
+        if (strcmp(player, "X") == 0) // lose
+        {
+            int play = GetPlayerMove('X', arr.opponent[i]);
+            arr.player[i] = play;
+        }
+        else if (strcmp(player, "Y") == 0) // draw
+        {
+            int play = GetPlayerMove('Y', arr.opponent[i]);
+            arr.player[i] = play;
+        }
+        else if (strcmp(player, "Z") == 0) // win
+        {
+            int play = GetPlayerMove('Z', arr.opponent[i]);
+            arr.player[i] = play;
+        }
+        i++;
+        printf("Opponent: %s, Player: %s\n", opponent, player);
+    }
+
     fclose(file);
+    // return arr;
     return arr;
 }
 
-NumberArray sumNumbers(NumberArray numbers)
+void Calculate_Scores(StrategyArray strategyArray)
 {
-    // create a new array to hold the sum of the numbers between 0
-    // does to account for the last number in the array
+    // rules to make scores. (player + (6 if player wins))
+    int win = 6;
+    int draw = 3;
+    int lose = 0;
 
-    NumberArray sumArray;
-    initNumberArray(&sumArray);
-    int sum = 0;
-    for (size_t i = 0; i < numbers.size; i++)
+    // win if 2 beats 1, 3 beats 2, 1 beats 3, draw if same, else lose, score is player score, if win add 6, if draw add both scores
+   
+    for (size_t i = 0; i < strategyArray.capacity; i++)
     {
-        if (numbers.numbers[i] == 0)
+        if (strategyArray.opponent[i] == 1 && strategyArray.player[i] == 2)
         {
-            ensureCapacity(&sumArray);
-            sumArray.numbers[sumArray.size++] = sum;
-            sum = 0;
+            strategyArray.score[i] = strategyArray.player[i] + win;
+        }
+        else if (strategyArray.opponent[i] == 2 && strategyArray.player[i] == 3)
+        {
+            strategyArray.score[i] = strategyArray.player[i] + win;
+        }
+        else if (strategyArray.opponent[i] == 3 && strategyArray.player[i] == 1)
+        {
+            strategyArray.score[i] = strategyArray.player[i] + win;
+        }
+        else if (strategyArray.opponent[i] == strategyArray.player[i])
+        {
+            strategyArray.score[i] = strategyArray.player[i] + draw;
         }
         else
         {
-            sum += numbers.numbers[i];
+            strategyArray.score[i] = strategyArray.player[i] + lose;
         }
     }
-    // Account for the last sum if the array does not end with 0
-    if (sum != 0 || (numbers.size > 0 && numbers.numbers[numbers.size - 1] == 0))
-    {
-        ensureCapacity(&sumArray);
-        sumArray.numbers[sumArray.size++] = sum;
-    }
-    return sumArray;
 }
 
-void Index_of_Maximum(NumberArray sum_numbers)
-{
-    int max = sum_numbers.numbers[0];
-    int index = 0;
-    for (size_t i = 0; i < sum_numbers.size; i++)
-    {
-        if (sum_numbers.numbers[i] > max)
-        {
-            max = sum_numbers.numbers[i];
-            index = i;
-        }
-    }
-    printf("Index of maximum: %d\n", index + 1); // +1 because the index starts at 0
-
-    printf("Value of maximum: %d\n", max);
-    }
-
-
-NumberArray SortNumberArray_by_decending_values(NumberArray sum_numbers)
-{
-    int temp;
-    for (size_t i = 0; i < sum_numbers.size; i++)
-    {
-        for (size_t j = i + 1; j < sum_numbers.size; j++)
-        {
-            if (sum_numbers.numbers[i] < sum_numbers.numbers[j])
-            {
-                temp = sum_numbers.numbers[i];
-                sum_numbers.numbers[i] = sum_numbers.numbers[j];
-                sum_numbers.numbers[j] = temp;
-            }
-        }
-    }
-    return sum_numbers;
-}
-
-void Sum_of_Highest_Three(NumberArray sorted_sum_numbers)
+int Sum_Scores(StrategyArray strategyArray)
 {
     int sum = 0;
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < strategyArray.capacity; i++)
     {
-        sum += sorted_sum_numbers.numbers[i];
-        // printf("%d",sorted_sum_numbers.numbers[i]);
+        sum += strategyArray.score[i];
     }
-    printf("Sum of the highest three numbers: %d\n", sum);
+    return sum;
 }
 
 int main()
@@ -202,45 +210,21 @@ int main()
     struct timespec start, end;
     StartTimer(&start);
 
-    // create a string that holds the path
     char test_input_path[] = "input.txt";
+    StrategyArray strategyArray = readDataToStrategyArray(test_input_path);
 
-    // read the numbers from the file
-    NumberArray numbers = readNumbersFromFile(test_input_path);
+    Calculate_Scores(strategyArray);
 
-    // // print the numbers for debugging
-    // for (size_t i = 0; i < numbers.size; i++) 
-    // {
-    //     printf("%d\n", numbers.numbers[i]);
-    // }
+    // print the numbers for debugging
+    for (size_t i = 0; i < strategyArray.capacity; i++)
+    {
+        printf("%d %d %d\n", strategyArray.opponent[i], strategyArray.player[i], strategyArray.score[i]);
+    }
 
-    
-    NumberArray sum_numbers = sumNumbers(numbers);
-
-    // // print the sum array for debugging
-    // for (size_t i = 0; i < sum_numbers.size; i++)
-    // {
-    //     printf("Sum: %d\n", sum_numbers.numbers[i]);
-    // }
-
-    NumberArray sorted_sum_numbers = SortNumberArray_by_decending_values(sum_numbers);
-    
-
-    // for (size_t i = 0; i < sorted_sum_numbers.size; i++)
-    // {
-    //     printf("Sorted Sum: %d\n", sorted_sum_numbers.numbers[i]);
-    // }
-
-    Index_of_Maximum(sum_numbers); 
-
-    // sum of the top highest three numbers
-
-    Sum_of_Highest_Three(sorted_sum_numbers);
-
-    printf("Test input path: %s\n", test_input_path);
+    int sum = Sum_Scores(strategyArray);
+    printf("Sum of scores: %d\n", sum);
 
     EndTimer(&start, &end);
-    freeNumberArray(&numbers);
     printf("End of test\n");
     return 0;
 }
