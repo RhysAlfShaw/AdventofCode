@@ -87,7 +87,7 @@ int GetPlayerMove(char player, int opponent)
         fprintf(stderr, "Invalid player move\n");
         exit(1);
     }
-   
+    return 0;
 }
 
 StrategyArray readDataToStrategyArray(const char *filename)
@@ -152,7 +152,7 @@ StrategyArray readDataToStrategyArray(const char *filename)
             arr.player[i] = play;
         }
         i++;
-        printf("Opponent: %s, Player: %s\n", opponent, player);
+        // printf("Opponent: %s, Player: %s\n", opponent, player);
     }
 
     fclose(file);
@@ -216,15 +216,15 @@ int main()
     Calculate_Scores(strategyArray);
 
     // print the numbers for debugging
-    for (size_t i = 0; i < strategyArray.capacity; i++)
-    {
-        printf("%d %d %d\n", strategyArray.opponent[i], strategyArray.player[i], strategyArray.score[i]);
-    }
+    // for (size_t i = 0; i < strategyArray.capacity; i++)
+    // {
+    //     printf("%d %d %d\n", strategyArray.opponent[i], strategyArray.player[i], strategyArray.score[i]);
+    // }
 
     int sum = Sum_Scores(strategyArray);
     printf("Sum of scores: %d\n", sum);
 
     EndTimer(&start, &end);
-    printf("End of test\n");
+    printf("End!\n");
     return 0;
 }
