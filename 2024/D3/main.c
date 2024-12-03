@@ -78,10 +78,10 @@ Kernals generate_valid_Kernals()
         }
     }
     printf("Kernal Count: %d\n", kernalCount);
-    for (int i = 0; i < 10; i++)
-    {
-        printf("Kernal: %s\n", kernals.Kernals[i]);
-    }
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     printf("Kernal: %s\n", kernals.Kernals[i]);
+    // }
     return kernals;
 }
 
@@ -186,11 +186,11 @@ KernalResult ValidMulLocation(CuruptedMemory memory)
     init_DoDontMask(&mask, memory);
     process_dodont_mask(&mask, memory, dodont);
 
-    for (int i = 0; i < memory.contentLength; i++)
-    {
-        printf("%d", mask.mask[i]);
-    }
-    printf("\n");
+    // for (int i = 0; i < memory.contentLength; i++)
+    // {
+    //     printf("%d", mask.mask[i]);
+    // }
+    // printf("\n");
 
     // remove the invalid kernals from the mask
     int newKernalCount = 0;
@@ -265,10 +265,10 @@ int main()
     KernalResult validKernals = ValidMulLocation(memory);
     
     // print the kernals
-    for (int i = 0; i < validKernals.kernalCount; i++)
-    {
-        printf("Kernal: %s\n", validKernals.FoundKernals[i]);
-    }
+    // for (int i = 0; i < validKernals.kernalCount; i++)
+    // {
+    //     printf("Kernal: %s\n", validKernals.FoundKernals[i]);
+    // }
 
     int summ = CalculateKernals(validKernals);
 
