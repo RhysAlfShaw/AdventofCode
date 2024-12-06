@@ -8,26 +8,21 @@ class EncoderDecoder(nn.Module):
     def __init__(self):
         super(EncoderDecoder, self).__init__()
 
-        # Encoder
         self.enc1 = nn.Conv2d(1, 64, kernel_size=3, padding=1)
         self.enc2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.enc3 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
 
-        # Decoder
         self.dec3 = nn.ConvTranspose2d(256, 128, kernel_size=3, padding=1)
         self.dec2 = nn.ConvTranspose2d(128, 64, kernel_size=3, padding=1)
         self.dec1 = nn.ConvTranspose2d(64, 1, kernel_size=3, padding=1)
 
-        # Max pooling
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
     def forward(self, x):
-        # Encoder
         x1 = F.relu(self.enc1(x))
         x2 = self.pool(F.relu(self.enc2(x1)))
         x3 = self.pool(F.relu(self.enc3(x2)))
 
-        # Decoder
         x = F.interpolate(x3, scale_factor=2, mode="nearest")
         x = F.relu(self.dec3(x))
         x = F.interpolate(x, scale_factor=2, mode="nearest")
@@ -36,11 +31,9 @@ class EncoderDecoder(nn.Module):
 
         return x
 
-    def predict_binary_mask(self, x, threshold=0.1):
-        # Get the sigmoid output
+    def predict_binary_mask(self, x, threshold=0.5):
         output = self.forward(x)
 
-        # Convert to binary mask based on threshold
         binary_mask = (output > threshold).float()
 
         return binary_mask
