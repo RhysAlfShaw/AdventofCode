@@ -3,6 +3,10 @@ use std::io::{self, BufRead};
 use std::env;
 use std::collections::HashSet;
 
+fn print_advend_of_code_line() {
+    println!(" Advent of Code 2024 - Day 10 ");
+}
+
 fn read_file_into_2d_array(file_path: &str) -> Result<Vec<Vec<i32>>, io::Error> {
     let file = File::open(file_path)?;
     let reader = io::BufReader::new(file);
@@ -58,12 +62,12 @@ fn count_distinct_trails(grid: &Vec<Vec<i32>>, start_r: usize, start_c: usize) -
         visited[r][c] = true;
         path.push((r, c));
 
-        // Check if we've reached a '9'
+        // check if we've reached a '9'
         if grid[r][c] == 9 {
             distinct_paths.insert(path.clone());
         }
 
-        // Explore neighbors
+        // explore neighbors
         let rows = grid.len();
         let cols = grid[0].len();
         for (new_r, new_c) in get_neighbors(r, c, rows, cols) {
@@ -71,8 +75,6 @@ fn count_distinct_trails(grid: &Vec<Vec<i32>>, start_r: usize, start_c: usize) -
                 dfs(grid, new_r, new_c, visited, path, distinct_paths);
             }
         }
-
-        // Backtrack
         visited[r][c] = false;
         path.pop();
     }
@@ -135,15 +137,18 @@ fn search_trail_heads(grid: &Vec<Vec<i32>>) -> Vec<(usize, usize)> {
 }
 
 fn main() {
+
+    print_advend_of_code_line();
+
     let cwd = env::current_dir().unwrap();
-    
+
     let file_path_test = format!("{}/test_input.txt", cwd.display());
 
     println!("Reading file: {}", file_path_test);
     let integers = read_file_into_2d_array(&file_path_test).unwrap();
     // start a timer
     let start = std::time::Instant::now();
-    // Part 1: Count reachable 9s
+    // part 1: Count reachable 9s
     let trail_heads = search_trail_heads(&integers);
     let mut total = 0;
     for (r, c) in &trail_heads {
@@ -154,7 +159,7 @@ fn main() {
     }
     println!("Test Part 1 -- Sum of Scores: {}", total);
 
-    // Part 2: Calculate trailhead ratings
+    // part 2: Calculate trailhead ratings
     let mut total_rating = 0;
     for (r, c) in trail_heads {
         let rating = calculate_trailhead_rating(&integers, r, c);
