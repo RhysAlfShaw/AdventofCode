@@ -4,3 +4,5 @@
 .vscode/tasks.json
 *.txt
 *program
+*target
+*Cargo.lock

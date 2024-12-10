@@ -1,0 +1,5 @@
+[package]
+name = "advent_of_code_d10"
+
+[build]
+include = ["test_input.txt","input.txt"]
