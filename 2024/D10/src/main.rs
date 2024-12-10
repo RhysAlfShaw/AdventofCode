@@ -136,6 +136,36 @@ fn search_trail_heads(grid: &Vec<Vec<i32>>) -> Vec<(usize, usize)> {
     trail_heads
 }
 
+fn print_grid(grid: &Vec<Vec<i32>>) {
+    const RESET: &str = "\x1b[0m";
+    const PASTEL_COLORS: [&str; 10] = [
+        // 10 level from blue 0 to white
+        "\x1b[48;5;33m", // blue
+        "\x1b[48;5;39m",
+        "\x1b[48;5;45m",
+        "\x1b[48;5;51m",
+        "\x1b[48;5;87m",
+        "\x1b[48;5;123m",
+        "\x1b[48;5;159m",
+        "\x1b[48;5;195m",
+        "\x1b[48;5;231m",
+        "\x1b[48;5;255m", // white
+
+    ];
+
+    // let min_val = grid.iter().flatten().cloned().min().unwrap_or(0);
+    // let max_val = grid.iter().flatten().cloned().max().unwrap_or(1);
+
+    for r in 0..grid.len() {
+        for c in 0..grid[0].len() {
+            let value = grid[r][c];
+            let color_index = (value % PASTEL_COLORS.len() as i32).abs() as usize;
+            print!("{}{:2} {}", PASTEL_COLORS[color_index], value, RESET);
+        }
+        println!();
+    }
+}
+
 fn main() {
 
     print_advend_of_code_line();
@@ -181,6 +211,8 @@ fn main() {
         total_real += count;
         // println!("Trail head at ({}, {}), reachable 9s: {}", r, c, count);
     }
+    print_grid(&integers);
+    
     println!(" -------------------------------- ");
     println!("Real Part 1 -- Sum of Scores: {}", total_real);
 
@@ -196,4 +228,8 @@ fn main() {
     let duration = start.elapsed();
     println!("Time elapsed is: {:?}", duration);
     println!("Done!");
+
+    print_grid(&integers_real);
+
+    
 }
