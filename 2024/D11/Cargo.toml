@@ -1,0 +1,12 @@
+[package]
+name = "D11"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hashbrown = "0.15"
+
+[build]
+include = ["test_input.txt","input.txt"]
