@@ -14,6 +14,7 @@ fn read_in_data_to_string(file_path: &str) -> String {
 
 fn blink(old_data: &HashMap<i64, usize>) -> HashMap<i64, usize> {
     // create new hashmap with the same capacity as the old hashmap
+    // optimisation.
     let mut stones = HashMap::with_capacity(old_data.len());
     
     // iterate over the old hashmap
@@ -29,7 +30,7 @@ fn blink(old_data: &HashMap<i64, usize>) -> HashMap<i64, usize> {
                     // if the number of digits is even, split the stone in half
                     let half_digits = digits / 2;
                     let divisor = 10i64.pow(half_digits);
-                    // store the key and the value in the new hashmap 
+                    // store the key and the value in the new hashmap
                     *stones.entry(stone % divisor).or_default() += value; 
                     *stones.entry(stone / divisor).or_default() += value; 
                     // println!("{} {}", stone % divisor, stone / divisor);
@@ -80,6 +81,7 @@ fn main(){
             part_1 = data_real.values().sum();
         }
         data_real = blink(&data_real);
+        println!("{:?}", data_real)
     }
 
     println!("Part 1:{} Part 2: {}", part_1, data_real.values().sum::<usize>());

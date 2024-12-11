@@ -130,7 +130,7 @@ fn count_distinct_trails_print(grid: &Vec<Vec<i32>>, start_r: usize, start_c: us
             // when number of trails increase we reset the grid
             let number_of_trails = distinct_paths.len() as i32;
             print_grid(trace, number_of_trails);
-            sleep(Duration::from_millis(20));  
+            sleep(Duration::from_millis(200));  
             // trace[new_r][new_c] = grid[new_r][new_c]; // Restore the original value
 
             dfs(grid, new_r, new_c, visited, path, distinct_paths, trace);
