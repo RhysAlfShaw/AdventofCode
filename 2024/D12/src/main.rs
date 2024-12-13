@@ -174,17 +174,40 @@ fn process_grid(path: &str) {
     println!("Part 2: {}", sum_2);
 }
 
+fn displayGridwithColor(grid: &Vec<Vec<char>>) {
+    let alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+                    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+                    'U', 'V', 'W', 'X', 'Y', 'Z'];
+    // map each character to a color
+    let colors = [
+        "\x1b[31m", "\x1b[32m", "\x1b[33m", "\x1b[34m", "\x1b[35m", "\x1b[36m", "\x1b[37m",
+        "\x1b[91m", "\x1b[92m", "\x1b[93m", "\x1b[94m", "\x1b[95m", "\x1b[96m", "\x1b[97m",
+        "\x1b[41m", "\x1b[42m", "\x1b[43m", "\x1b[44m", "\x1b[45m", "\x1b[46m", "\x1b[47m",
+        "\x1b[101m", "\x1b[102m", "\x1b[103m", "\x1b[104m", "\x1b[105m", "\x1b[106m", "\x1b[107m",
+    ];
+    for row in grid {
+        for cell in row {
+            let color = colors[(cell.to_ascii_uppercase() as u8 - b'A') as usize];
+            print!("{}{}{}", color, cell, "\x1b[0m");
+        }
+        println!();
+    }
+}
+
 
 fn main() {
     println!("\n--- Advent of Code 2024 ---");
     let start = std::time::Instant::now();
     println!("TEST");
     let test_path = "test_input.txt";
+    displayGridwithColor(&open_file(test_path));
     process_grid(test_path);
 
     println!("\nREAL");
     let real_path = "input.txt";
     process_grid(real_path);
+
+    displayGridwithColor(&open_file(real_path));
     // print the time elapsed
     println!("\nCompleted in {}ms", start.elapsed().as_millis());
 }   
