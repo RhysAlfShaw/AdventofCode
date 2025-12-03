@@ -14,7 +14,7 @@ int main() {
     int distance;
 
     while (fscanf(file, " %c%d", &direction, &distance) == 2) {
-        // is the rotations large enought for it too loop around?
+
         int full_rotations = distance / DIAL_SIZE;
         part2_password += full_rotations;
 
@@ -42,6 +42,9 @@ int main() {
         }
     }
     fclose(file);
+    printf("\n===================================\n");
+    printf("     Advent of Code Day 1 Results  \n");
+    printf("===================================\n");
     printf("Part 1 Password: %lld\n", part1_password);
     printf("Part 2 Password: %lld\n", part2_password);
     return 0;
